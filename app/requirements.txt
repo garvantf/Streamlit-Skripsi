@@ -1,3 +1,0 @@
-joblib
-streamlit
-scikit-learn
