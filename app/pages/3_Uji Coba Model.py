@@ -18,19 +18,36 @@ st.markdown("---")
 # ===============================
 # LOAD MODEL
 # ===============================
-MODEL_PATH = "models/model_manual_smote_C1.pkl"
+# ===============================
+# LOAD MODEL
+# ===============================
+# Ambil lokasi absolut dari file skrip ini berada
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Mencari model di folder yang sama dengan skrip (karena anda taruh di folder pages juga)
+MODEL_PATH = os.path.join(current_dir, "model_manual_smote_C1.pkl")
+
+# Jika tidak ketemu di folder pages, cari di folder "models" yang sejajar dengan folder app
+if not os.path.exists(MODEL_PATH):
+    # Coba naik 2 tingkat (keluar dari pages/app) lalu masuk ke models/
+    root_models_path = os.path.join(current_dir, "..", "..", "models", "model_manual_smote_C1.pkl")
+    if os.path.exists(root_models_path):
+        MODEL_PATH = root_models_path
 
 if not os.path.exists(MODEL_PATH):
-    st.error("Model tidak ditemukan. Pastikan file ada di folder models/")
+    st.error(f"Model tidak ditemukan! Sistem mencari di: {MODEL_PATH}")
+    st.info("Pastikan nama file di GitHub sama persis (huruf besar/kecilnya).")
+    # Debug: melihat isi folder saat ini agar tahu apa yang salah
+    st.write("Isi folder saat ini:", os.listdir(current_dir))
     st.stop()
 
 try:
+    # Menggunakan joblib untuk load model
     model = joblib.load(MODEL_PATH)
+    st.success(f"Model berhasil dimuat dari: {os.path.basename(MODEL_PATH)}")
 except Exception as e:
     st.error(f"Gagal load model: {e}")
     st.stop()
-
-st.success("Model berhasil dimuat")
 
 # ===============================
 # PILIH MODE PREDIKSI
